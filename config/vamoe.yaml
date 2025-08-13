@@ -1,0 +1,105 @@
+### base config ###
+full_field: &FULL_FIELD
+  loss: 'trainl2'                        # 'l2' 'lploss' 'trainl2'
+  loss_weight: 0.1
+  lr: 2E-4                               # 2E-4     1E-5 2E-5 5E-5     
+  min_lr: 3E-7                           # 1E-7 3E-7
+  scheduler: 'CosineAnnealingLR'         # 'ReduceLROnPlateau' 'CosineAnnealingLR'
+  # num_data_workers: 4
+  dt: 1                                  # how many timesteps ahead the model will predict
+  n_history: 0                           # how many previous timesteps to consider
+  prediction_type: 'iterative'
+  prediction_length: 41                  #applicable only if prediction_type == 'iterative'
+  n_initial_conditions: 5                #applicable only if prediction_type == 'iterative'
+  ics_type: "default"
+  save_raw_forecasts: !!bool True
+  save_channel: !!bool False
+  masked_acc: !!bool False
+  maskpath: None
+  perturb: !!bool False
+  add_grid: !!bool False
+  N_grid_channels: 0
+  gridtype: 'sinusoidal'                 #options 'sinusoidal' or 'linear'
+  roll: !!bool False
+  max_epochs: 100                        # 150 200
+  # batch_size: 64
+
+  nettype: 'vamoe'
+  # patch_size: 8
+  width: 56
+  modes: 32
+  #options default, residual
+  target: 'default' 
+  normalization: 'zscore' #options zscore (minmax not supported) 
+
+
+  orography: !!bool False
+  orography_path: None
+
+  log_to_screen: !!bool True
+  log_to_wandb: !!bool False
+  save_checkpoint: !!bool True
+
+  enable_nhwc: !!bool False
+  optimizer_type: 'AdamW'       # 'FusedAdam' 'AdamW' 'adam'
+  crop_size_x: None
+  crop_size_y: None
+
+  two_step_training: !!bool False
+  plot_animations: !!bool False
+
+  add_noise: !!bool False
+  noise_std: 0
+
+  # dataset setting
+  name: 'era5'
+  root_dir: './data/era5_np128x256/'
+  feature_dims: 70              # 65 68 69
+  model_type: 'vit'
+  patch: True
+  patch_size: 2                 # 2 4
+  num_blocks: 16                # 8 16
+  encoder_depths: 24            # 16 24
+  embed_dim: 768                # 768 1024 1280
+  t_in: 1
+  t_out_train: 1
+  t_out_valid: 1
+  t_out_test: 20
+  valid_interval: 12
+  test_interval: 12
+  train_interval: 6
+  pred_lead_time: 6
+  data_frequency: 1
+  train_period: [1979, 2020]    # [1979, 2020]  
+  valid_period: [2021, 2021]
+  test_period: [2021, 2021]
+  batch_size: 2                 # 4 12 16
+  num_data_workers: 20
+  grid_resolution: 1.4
+  h_size: 128
+  w_size: 256
+  pressure_level_num: 13
+  surface_feature_size: 5       # 0 3 4 5
+  save_rmse_acc: True
+  use_moe: 'channelmoe'         # moe, densemoe, channelmoe, channelmoev3, False
+  num_exports: 6                # 5 6 20 69
+  mlp_ratio: 2
+  topk: 2                       # 1,2,4
+  encoder_mlp: False
+  decoder_mlp: False
+  use_grad_clip: True
+  use_cl: True
+  cl_ckpt_path: './logs/vit_rebuttal_zquv_52_0.0002AdamW_CosLR_trainl2loss0.1_useMoE_ChannelMoE_GradClip_patch2channel768_cl_0517/vamoe/1/training_checkpoints/ckpt.tar'
+  
+afno_backbone: &backbone
+  <<: *FULL_FIELD
+  log_to_wandb: !!bool False
+  # batch_size: 24
+  # max_epochs: 200
+  scheduler: 'CosineAnnealingLR'
+  in_channels: 70    # 65 68 69   # [0, 1 ,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+  out_channels: 70    # 65 68 69    # [0, 1 ,2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+  orography: !!bool False
+  orography_path: None 
+
+
